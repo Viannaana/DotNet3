@@ -8,16 +8,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CP3.IoC
 {
-    public class Bootstrap
+    public static class Bootstrap
     {
         public static void Start(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationContext>(x => {
-                x.UseOracle(configuration["ConnectionStrings:Oracle"]);
-            });
+            // Configuração do DbContext com a string de conexão para Oracle
+            services.AddDbContext<BarcoApplicationContext>(options =>  // Alterado para BarcoApplicationContext
+                options.UseOracle(configuration.GetConnectionString("OracleConnection")));
 
+            // Registro de Repositórios
+            services.AddScoped<IBarcoRepository, BarcoRepository>();
 
+            // Registro de Serviços de Aplicação
+            services.AddScoped<IBarcoApplicationService, BarcoApplicationService>();
+
+            // Adicionar outras injeções de dependência, caso necessário
         }
-
     }
 }
